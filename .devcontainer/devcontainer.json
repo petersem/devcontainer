@@ -1,12 +1,12 @@
 {
+     "image": "mcr.microsoft.com/devcontainers/typescript-node",
+
      "name": "Matts Dev Container Demo",
      "workspaceMount": "source=/home/petersem/code/devcontainer,target=/workspace,type=bind,consistency=cached",
      "workspaceFolder": "/workspace",
      "dockerComposeFile": "../compose.yaml",  
      "service": "db",
      "shutdownAction": "stopCompose",
-
-     "image": "mcr.microsoft.com/devcontainers/typescript-node",
 
      "features": {
           "ghcr.io/devcontainers/features/docker-in-docker:2": {
@@ -34,9 +34,8 @@
                ]
           }
      },
-     "postCreateCommand": "npm install"
-
-     //      "sudo apt-get update",
-     //      "sudo apt-get upgrade -y"
-     // ]
+     "postCreateCommand": "npm install",
+     "postCreateCommand": "sudo apt-get update",
+     "postCreateCommand": "sudo apt-get upgrade -y"
+     ]
 }
