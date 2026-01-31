@@ -2,8 +2,9 @@
      "name": "Matts Dev Container Demo",
      "workspaceMount": "source=/home/petersem/code/devcontainer,target=/workspace,type=bind,consistency=cached",
      "workspaceFolder": "/workspace",
-     "dockerComposeFile": "compose.yaml",  
+     "dockerComposeFile": "../compose.yaml",  
      "service": "db",
+     "shutdownAction": "stopCompose"
 
      "image": "mcr.microsoft.com/devcontainers/typescript-node",
      "features": {
@@ -11,17 +12,21 @@
                "moby": false
                // "dockerDefaultAddressPool": "base=192.168.0.0/16,size=24",
                // "version": "latest"
-          },
+          }//,
           // "ghcr.io/devcontainers/features/sshd:1": {
           //      "azureDnsAutoDetection": true
           //},
-          "ghcr.io/w3cj/devcontainer-features/firewall:latest": {
-               "dockerNetworks": true,
-               "npmRegistry": true,
-               "vscodeMarketplace": true,
-               "dockerRegistry": true,
-               "ubuntuPackages": true
-          }
+          // "ghcr.io/w3cj/devcontainer-features/firewall:latest": {
+          //      "verbose": true,
+          //      "dockerNetworks": true,
+          //      "npmRegistry": true,
+          //      "vscodeMarketplace": true,
+          //      "dockerRegistry": true,
+          //      "ubuntuPackages": true,
+          //      "dnsPublic": true,
+          //      "githubDomains": true,
+          //      "githubIps": true
+          // }
      },
 
      "customizations": {
