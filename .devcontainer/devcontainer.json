@@ -8,7 +8,7 @@
      "image": "mcr.microsoft.com/devcontainers/typescript-node",
      "features": {
           "ghcr.io/devcontainers/features/docker-in-docker:2": {
-               "moby": false,
+               "moby": false
                // "dockerDefaultAddressPool": "base=192.168.0.0/16,size=24",
                // "version": "latest"
           },
@@ -20,7 +20,7 @@
                "npmRegistry": true,
                "vscodeMarketplace": true,
                "dockerRegistry": true,
-               "ubuntuPackages": tru
+               "ubuntuPackages": true
           }
      },
 
