@@ -4,9 +4,10 @@
      "workspaceFolder": "/workspace",
      "dockerComposeFile": "../compose.yaml",  
      "service": "db",
-     "shutdownAction": "stopCompose"
+     "shutdownAction": "stopCompose",
 
      "image": "mcr.microsoft.com/devcontainers/typescript-node",
+
      "features": {
           "ghcr.io/devcontainers/features/docker-in-docker:2": {
                "moby": false
