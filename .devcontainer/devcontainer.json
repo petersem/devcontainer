@@ -4,10 +4,12 @@
      "name": "Matts Dev Container Demo",
      "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
      "workspaceFolder": "/workspace",
+     "containerEnv": { "TZ": "Australia/Brisbane" },
+
      "dockerComposeFile": "../compose.yaml",  
      "service": "db",
      "shutdownAction": "stopCompose",
-
+ 
      "features": {
           "ghcr.io/devcontainers/features/docker-in-docker:2": {
                "moby": false
