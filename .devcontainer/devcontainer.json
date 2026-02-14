@@ -6,7 +6,7 @@
      "workspaceFolder": "/workspace",
      "containerEnv": { "TZ": "Australia/Brisbane" },
 
-     "dockerComposeFile": "../compose.yaml",  
+     "dockerComposeFile": "compose.yaml",  
      "service": "db",
      "shutdownAction": "stopCompose",
  
@@ -36,5 +36,5 @@
                ]
           }
      },
-     "postCreateCommand": "npm install && sudo apt-get update && sudo apt-get upgrade -y"
+     "postCreateCommand": "npm install && npm install just --save-dev && npm install nodemon --save-dev && sudo apt-get update && sudo apt-get upgrade -y"
 }
