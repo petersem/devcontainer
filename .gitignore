@@ -24,3 +24,6 @@ src/
 .env
 .env.*
 !.env.example
+
+# keep any empty folders if they have a .keep file
+!.keep

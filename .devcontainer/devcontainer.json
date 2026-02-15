@@ -5,7 +5,7 @@
      "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
      "containerEnv": { "TZ": "Australia/Brisbane" },
 
-     "dockerComposeFile": "compose.yaml",  
+     "dockerComposeFile": ["./compose.yaml"],  
      "service": "db",
      "shutdownAction": "stopCompose",
      "workspaceFolder": "/workspace",
