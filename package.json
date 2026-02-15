@@ -1,0 +1,19 @@
+{
+  "name": "jsdemo",
+  "version": "1.0.0",
+  "description": "just a demo project using docker dev containers",
+  "license": "ISC",
+  "author": "Matt Petersen",
+  "type": "module",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "jest --coverage",
+    "dev": "nodemon src/index.mjs"
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.28.6",
+    "jest": "^30.2.0",
+    "just": "^0.1.8",
+    "nodemon": "^3.1.11"
+  }
+}

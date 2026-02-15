@@ -1,0 +1,40 @@
+@font-face {
+    font-family: 'regular';
+    src: url('./../fonts/Inter-Regular.otf');
+
+    font-family: 'bold';
+    src: url('./../fonts/Inter-SemiBold.otf');
+
+    font-family: 'black';
+    src: url('./../fonts/Inter-Black.otf');
+
+    
+    font-family: 'blackitalic';
+    src: url('./../fonts/InterDisplay-BlackItalic.otf');
+}
+
+body {
+    background-color: #7BA4D0;
+}
+
+h1 {
+    font-family: 'blackitalic';
+    color: #0D2440;
+    font-size: 3.5em;
+}
+
+ul {
+    list-style-type: square;
+    color: #E7F0FA;
+}
+
+ul a {
+    font-family: 'bold';
+    list-style-type: square;
+    color: #E7F0FA;
+    font-size: 1.5em;
+}
+
+ul li {
+    margin: 5px;
+}

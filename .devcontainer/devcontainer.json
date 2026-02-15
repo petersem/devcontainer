@@ -1,0 +1,39 @@
+{
+     "image": "mcr.microsoft.com/devcontainers/typescript-node",
+
+     "name": "Matts Dev Container Demo",
+     "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+     "workspaceFolder": "/workspace",
+     "dockerComposeFile": "compose.yaml",  
+     "service": "db",
+     "shutdownAction": "stopCompose",
+
+     "features": {
+          "ghcr.io/devcontainers/features/docker-in-docker:2": {
+               "moby": false
+               // "dockerDefaultAddressPool": "base=192.168.0.0/16,size=24",
+               // "version": "latest"
+          },
+          "ghcr.io/devcontainers/features/sshd:1": {
+               "azureDnsAutoDetection": true
+          }
+     },
+
+     "customizations": {
+          "vscode": {
+               "settings": {
+                   "files.autoSaveDelay": 2000,
+                   "files.autoSave": "afterDelay",                    
+                   "workbench.colorTheme": "Abyss" //"Visual Studio Dark"
+               },
+               "extensions": [
+                    "esbenp.prettier-vscode",
+                    "ritwickdey.liveserver",
+                    "dbaeumer.vscode-eslint",
+                    "ms-azuretools.vscode-docker",
+                    "crystal-spider.jsdoc-generator"
+               ]
+          }
+     },
+     "postCreateCommand": "npm install && sudo apt-get update && sudo apt-get upgrade -y"
+}
