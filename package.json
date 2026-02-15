@@ -8,7 +8,7 @@
   "main": "webserver.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/webserver.mjs"
+    "dev": "nodemon src/index.mjs"
   },
   "devDependencies": {
     "just": "^0.1.8",
