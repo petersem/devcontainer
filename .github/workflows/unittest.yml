@@ -34,23 +34,5 @@ jobs:
         uses: appleboy/discord-action@v1.2.0
         with:
           webhook_url: ${{ secrets.WEBHOOK_URL }}
-          message: "Send Multiple File."
+          message: ${{ $GITHUB_STEP_SUMMARY }}
 
-        #  
-      # - name: Discord notification
-      #   env:
-      #     DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_URL }}
-      #   uses: Ilshidur/action-discord@master
-      #   with:
-      #     args: 'The project {{ EVENT_PAYLOAD.repository.full_name }} has been deployed. | fdfvdvg`
-          
-
-      # - name: Comment PR with Jest Results
-      #   uses: marocchino/sticky-pull-request-comment@v2
-      #   with:
-      #     header: jest-results
-      #     message: |
-      #       **Jest Test Results**
-      #       ```
-      #       $(cat jest-results.json | jq -r '.testResults[] | "\(.name): \(.status)"')
-      #       ```
