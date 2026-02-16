@@ -21,6 +21,28 @@ jobs:
           echo "## Jest Test Results" >> $GITHUB_STEP_SUMMARY
           cat jest-results.json | jq '.testResults[] | "\(.name): \(.status)"' >> $GITHUB_STEP_SUMMARY
 
+
+      - name: send custom message
+        uses: appleboy/discord-action@v1.2.0
+        with:
+          webhook_url: ${{ secrets.WEBHOOK_URL }}
+          message: `The ${{ EVENT_PAYLOAD.repository.full_name }} was pushed.
+          **Jest Test Results**
+          message: ${{ $(cat jest-results.json | jq -r '.testResults[] | "\(.name): \(.status) }}`
+          
+          
+
+      - name: Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@master
+        with:
+          args: 'The project {{ EVENT_PAYLOAD.repository.full_name }} has been deployed. 
+`
+          
+
+
+
       - name: Comment PR with Jest Results
         uses: marocchino/sticky-pull-request-comment@v2
         with:
