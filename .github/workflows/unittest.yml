@@ -26,5 +26,5 @@ jobs:
         uses: appleboy/discord-action@v1.2.0
         with:
           webhook_url: ${{ secrets.WEBHOOK_URL }}
-          message: ${{ GITHUB_STEP_SUMMARY }}
+          message: $GITHUB_STEP_SUMMARY
 
