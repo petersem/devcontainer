@@ -1,11 +1,32 @@
-name: CI-UnitTest
-on: push
+name: Jest Tests
+
+on:
+  pull_request:
+    branches: [ main ]
+
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Install modules
-      run: yarn
-    - name: Run tests
-      run: yarn test
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci
+      - run: npm test -- --json --outputFile=jest-results.json
+
+      # Post results to workflow summary
+      - name: Post Jest Results
+        run: |
+          echo "## Jest Test Results" >> $GITHUB_STEP_SUMMARY
+          cat jest-results.json | jq '.testResults[] | "\(.name): \(.status)"' >> $GITHUB_STEP_SUMMARY
+
+      - name: Comment PR with Jest Results
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: jest-results
+          message: |
+            **Jest Test Results**
+            ```
+            $(cat jest-results.json | jq -r '.testResults[] | "\(.name): \(.status)"')
+            ```
