@@ -38,8 +38,6 @@ jobs:
       #     args: 'The project {{ EVENT_PAYLOAD.repository.full_name }} has been deployed. | fdfvdvg`
           
 
-
-
       # - name: Comment PR with Jest Results
       #   uses: marocchino/sticky-pull-request-comment@v2
       #   with:
