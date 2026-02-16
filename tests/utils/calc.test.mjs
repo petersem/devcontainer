@@ -59,7 +59,7 @@ describe('mult function', () => {
   });
 
   test('throws error if arguments are not numbers', () => {
-    expect(() => sub(2, '3')).toThrow('Both arguments must be numbers');
+    expect(() => mult(2, '3')).toThrow('Both arguments must be numbers');
   });
 
 });
