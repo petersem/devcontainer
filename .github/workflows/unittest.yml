@@ -22,12 +22,18 @@ jobs:
           cat jest-results.json | jq '.testResults[] | "\(.name): \(.status)"' >> $GITHUB_STEP_SUMMARY
 
       # send results to Discord
-      - name: Discord notification
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_URL }}
-        uses: Ilshidur/action-discord@master
+      # - name: Discord notification
+      #   env:
+      #     DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_URL }}
+      #   uses: Ilshidur/action-discord@master
+      #   with:
+      #     args: 'Hello World'
+
+      - name: send message
+        uses: appleboy/discord-action@v1.2.0
         with:
-          args: 'Hello World'
+          webhook_url: ${{ secrets.WEBHOOK_URL }}
+          message: "Send Multiple File."
 
         #  
       # - name: Discord notification
