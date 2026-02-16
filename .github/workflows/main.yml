@@ -26,9 +26,9 @@ jobs:
         uses: appleboy/discord-action@v1.2.0
         with:
           webhook_url: ${{ secrets.WEBHOOK_URL }}
-          message: `The ${{ EVENT_PAYLOAD.repository.full_name }} was pushed.
-          **Jest Test Results**
-          message: ${{ $(cat jest-results.json | jq -r '.testResults[] | "\(.name): \(.status) }}`
+          message: `The ${{ EVENT_PAYLOAD.repository.full_name }} was pushed.`
+          # **Jest Test Results**
+          # message: ${{ $(cat jest-results.json | jq -r '.testResults[] | "\(.name): \(.status) }}`
           
           
 
