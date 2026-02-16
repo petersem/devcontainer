@@ -35,5 +35,5 @@
                ]
           }
      },
-     "postCreateCommand": "npm install && sudo apt-get update && sudo apt-get upgrade -y"
+     "postCreateCommand": "npm i -g && npm i --save-dev"
 }
