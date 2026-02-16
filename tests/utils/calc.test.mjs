@@ -16,7 +16,6 @@ describe('Setup before testing', () => {
     });
 });
 
-
 let x = 0; 
 // Test pre jobs
 beforeEach(() => {
