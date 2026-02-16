@@ -1,4 +1,4 @@
-import { add, mult } from "./../src/utils/calc.mjs"
+import { add, mult, sub } from "./../src/utils/calc.mjs"
 
 describe('add function', () => {
   test('adds two positive numbers', () => {
@@ -24,7 +24,7 @@ describe('mult function', () => {
   });
 
   test('multiplies one positive and one negative number', () => {
-    expect(mult(2, -3)).toBe(6);  // deliberately fail here!!
+    expect(mult(2, -3)).toBe(-6);
   });
 
 
@@ -33,4 +33,23 @@ describe('mult function', () => {
   });
 });
 
+
+describe('sub function', () => {
+  test('subtracts two positive numbers', () => {
+    expect(sub(2, 3)).toBe(-1);
+  });
+
+  test('subtracts two negative numbers', () => {
+    expect(sub(-2, -3)).toBe(1);
+  });
+
+  test('subtracts one positive and one negative number', () => {
+    expect(sub(2, -3)).toBe(5);
+  });
+
+
+  test('throws error if arguments are not numbers', () => {
+    expect(() => sub(2, '3')).toThrow('Both arguments must be numbers');
+  });
+});
 

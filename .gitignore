@@ -5,7 +5,12 @@ npm-debug.log*
 
 # Dependency directories
 node_modules/
+
+# Typescript output
 out/
+
+# Jest coverage report
+coverage/
 
 # TypeScript cache
 *.tsbuildinfo
@@ -19,7 +24,7 @@ out/
 # Optional stylelint cache
 .stylelintcache
 
-# dotenv environment variable files
+# Environment variable files
 .env
 .env.*
 !.env.example
