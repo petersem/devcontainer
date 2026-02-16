@@ -21,12 +21,13 @@ jobs:
           echo "## Jest Test Results" >> $GITHUB_STEP_SUMMARY
           cat jest-results.json | jq '.testResults[] | "\(.name): \(.status)"' >> $GITHUB_STEP_SUMMARY
 
-
+      # send results to Discord
       - name: Discord notification
-        uses: cl8dep/action-discord@v0
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.WEBHOOK_URL }}
+        uses: Ilshidur/action-discord@master
         with:
-          webhook: ${{ secrets.WEBHOOK_URL }}
-          message: 'Hello World'
+          args: 'Hello World'
 
       # - name: Discord notification
       #   env:
