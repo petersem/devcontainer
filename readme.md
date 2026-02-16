@@ -5,16 +5,16 @@ Project shows some client-side JS and server-side JS (node js)
 ## Just a demo
 
 > **Note**
-> 
+>
 > For fun, this is also a Docker Dev container. (The VS Code project, dependencies, extensions, and additions, are all running in a container.)
 > This includes the addition of a MYSQL Server docker container, running docker-in-docker configuration.
 >
-> You can ignore the docker dev container stuff, or try it out. 
+> You can ignore the docker dev container stuff, or try it out.
 > You will need the following:
 >
 > - VS Code
 > - Docker Desktop
-> - The Docker Dev Container VS Code extension. 
+> - The Docker Dev Container VS Code extension.
 >
 > Then do a `ctrl - shift - p` to open the vs code pallete menu and type `Reopen folder in container`
 >
@@ -29,5 +29,5 @@ Project shows some client-side JS and server-side JS (node js)
 >
 > *All of this is within the dev container, not installed directly on your machine*
 >
-> Do a `ctrl - shift - p`, then `reopen folder locally` to exit the dev container. 
+> Do a `ctrl - shift - p`, then `reopen folder locally` to exit the dev container.
 >
