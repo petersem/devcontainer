@@ -9,7 +9,7 @@ jobs:
   job1:
     runs-on: ubuntu-latest
     outputs:
-      jesty: ${{ steps.jestOutput.outputs }}
+      jesty: ${{ steps.jestOutput.outputs.jestOutput }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
