@@ -25,7 +25,7 @@ jobs:
           echo "## Jest Test Results" >> $GITHUB_STEP_SUMMARY
           cat jest-results.json | jq '.testResults[] | "\(.name): \(.status)"' >> $GITHUB_STEP_SUMMARY
           # echo "jesty=" & $GITHUB_STEP_SUMMARY
-          run: echo "jesty=Hello from Job 1" >> $GITHUB_OUTPUT
+          echo "jesty=Hello from Job 1" >> $GITHUB_OUTPUT
 
   job2:
     runs-on: ubuntu-latest
