@@ -1,4 +1,4 @@
-name: Jest Tests Details
+name: Jest Tests
 
 on:
   push:
@@ -25,8 +25,8 @@ jobs:
         id: jest
         run: |
           set +e
-          # npm test -- --json --outputFile=jest-results.json
-          npm test -- --verbose > jest-output.txt 2>&1
+          npm test -- --json --outputFile=jest-results.json
+          
           echo "exit_code=$?" >> $GITHUB_OUTPUT
           set -e
 
