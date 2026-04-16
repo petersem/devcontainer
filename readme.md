@@ -20,6 +20,7 @@ Project shows some client-side JS and server-side JS (node js)
 >
 > You will notice that it takes a little while, but this is just the first time. Once it opens, you will have:
 >
+
 > - Customised VS Code settings and theme
 > - Node JS installed
 > - Docker installed

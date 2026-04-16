@@ -64,7 +64,6 @@ describe('mult function', () => {
 
 });
 
-
 describe('sub function', () => {
   test('subtracts two positive numbers', () => {
     expect(sub(2, 3)).toBe(-1);
