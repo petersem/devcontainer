@@ -25,14 +25,21 @@ jobs:
         id: jest
         run: |
           set +e
-          npm test -- --json --outputFile=jest-results.json
+          # npm test -- --json --outputFile=jest-results.json
+          npm test -- --verbose > jest-output.txt 2>&1
           echo "exit_code=$?" >> $GITHUB_OUTPUT
           set -e
 
       - name: Read Jest results
         id: results
         run: |
-          RESULTS=$(cat jest-results.json | jq -r '.testResults[].status' | sort | uniq -c)
+          #RESULTS=$(cat jest-results.json | jq -r '.testResults[].status' | sort | uniq -c)
+
+          # Escape backticks so Discord doesn't break the code block
+          ESCAPED_OUTPUT=$(sed 's/`/\\`/g' jest-output.txt | sed 's/"/\\"/g')
+          # Trim output if it's too long for Discord (2000 char limit)
+          RESULTS=$(echo "$ESCAPED_OUTPUT" | head -c 1800)
+
           echo "summary=$RESULTS" >> $GITHUB_OUTPUT
 
       # Post results to workflow summary
