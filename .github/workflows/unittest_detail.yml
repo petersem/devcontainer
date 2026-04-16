@@ -1,0 +1,59 @@
+name: Jest Tests
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  test-and-notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        
+      - name: Set up node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run Jest tests
+        id: jest
+        run: |
+          set +e
+          # Capture full output
+          npm test -- --verbose > jest-output.txt 2>&1
+          EXIT_CODE=$?
+          echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
+          set -e
+
+      - name: Prepare Discord message
+        id: format
+        run: |
+          # Escape backticks so Discord doesn't break the code block
+          ESCAPED_OUTPUT=$(sed 's/`/\\`/g' jest-output.txt | sed 's/"/\\"/g')
+
+          # Trim output if it's too long for Discord (2000 char limit)
+          TRIMMED_OUTPUT=$(echo "$ESCAPED_OUTPUT" | head -c 1800)
+
+          echo "output=$TRIMMED_OUTPUT" >> $GITHUB_OUTPUT
+
+      - name: Send Discord notification
+        if: always()
+        run: |
+          STATUS="✅ Tests passed"
+          if [ "${{ steps.jest.outputs.exit_code }}" != "0" ]; then
+            STATUS="❌ Tests failed"
+          fi
+
+          MESSAGE="${STATUS} on branch **${GITHUB_REF_NAME}**.\n\n\`\`\`\n${{ steps.format.outputs.output }}\n\`\`\`"
+
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\": \"${MESSAGE}\"}" \
+            ${{ secrets.WEBHOOK_URL }}
+
