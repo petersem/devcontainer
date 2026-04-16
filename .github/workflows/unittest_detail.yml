@@ -33,12 +33,16 @@ jobs:
         id: format
         run: |
           # Escape backticks so Discord doesn't break the code block
-          ESCAPED_OUTPUT=$(sed 's/`/\\`/g' jest-output.txt | sed 's/"/\\"/g')
+          ESCAPED_OUTPUT=$(sed 's/`/\\`/g' jest-output.txt)
 
-          # Trim output if it's too long for Discord (2000 char limit)
+          # Trim output to avoid Discord 2000-char limit
           TRIMMED_OUTPUT=$(echo "$ESCAPED_OUTPUT" | head -c 1800)
 
-          echo "output=$TRIMMED_OUTPUT" >> $GITHUB_OUTPUT
+          {
+            echo "output<<EOF"
+            echo "$TRIMMED_OUTPUT"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
 
       - name: Send Discord notification
         if: always()
