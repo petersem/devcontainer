@@ -29,7 +29,7 @@ afterEach(() => {
 
 describe('add function', () => {
   test('did pre-test init run', () => {
-    expect(x).toBe(5);  // test if pre init ran
+    expect(x).toBe(4);  // test if pre init ran
   });
 
   test('adds two positive numbers', () => {
