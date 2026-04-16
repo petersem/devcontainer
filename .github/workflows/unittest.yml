@@ -47,9 +47,9 @@ jobs:
       - name: Send discord notification
         if: always()
         run: |
-          STATUS="✅ Tests passed"
+          STATUS="✅ UnitTests passed"
           if [ "${{ steps.jest.outputs.exit_code }}" != "0" ]; then
-            STATUS="❌ Tests failed"
+            STATUS="❌ UnitTests failed"
           fi
 
           MESSAGE="${STATUS} on branch **${GITHUB_REF_NAME}**.\n\nResults:\n${{ steps.results.outputs.summary }}"
