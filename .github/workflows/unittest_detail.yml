@@ -32,7 +32,7 @@ jobs:
       - name: Prepare Discord message
         id: format
         run: |
-          # Escape backticks so Discord doesn't break the code block.
+          # Escape backticks so Discord doesn't break the code block
           ESCAPED_OUTPUT=$(sed 's/`/\\`/g' jest-output.txt)
 
           # Trim output to avoid Discord 2000-char limit
@@ -47,9 +47,9 @@ jobs:
       - name: Send Discord notification 
         if: always()
         run: |
-          STATUS="✅ Tests passed"
+          STATUS="✅ Unit Tests passed"
           if [ "${{ steps.jest.outputs.exit_code }}" != "0" ]; then
-            STATUS="❌ Tests failed"
+            STATUS="❌ Unit Tests failed"
           fi
 
           MESSAGE="${STATUS} on branch **${GITHUB_REF_NAME}**.\n\n\`\`\`\n${{ steps.format.outputs.output }}\n\`\`\`"
