@@ -14,7 +14,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 20
 
       - name: Install dependencies
         run: npm ci
@@ -23,7 +23,6 @@ jobs:
         id: jest
         run: |
           set +e
-          # Capture full output
           npm test -- --verbose > jest-output.txt 2>&1
           EXIT_CODE=$?
           echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
@@ -33,28 +32,28 @@ jobs:
         id: format
         run: |
           # Escape backticks so Discord doesn't break the code block
-          ESCAPED_OUTPUT=$(sed 's/`/\\`/g' jest-output.txt)
+          ESCAPED=$(sed 's/`/\\`/g' jest-output.txt)
 
-          # Trim output to avoid Discord 2000-char limit
-          TRIMMED_OUTPUT=$(echo "$ESCAPED_OUTPUT" | head -c 1800)
+          # Trim to avoid Discord 2000-char limit
+          TRIMMED=$(echo "$ESCAPED" | head -c 1800)
 
           {
             echo "output<<EOF"
-            echo "$TRIMMED_OUTPUT"
+            echo "$TRIMMED"
             echo "EOF"
           } >> $GITHUB_OUTPUT
 
-      - name: Send Discord notification 
+      - name: Send Discord notification
         if: always()
         run: |
-          STATUS="✅ Unit Tests passed"
+          STATUS="✅ Tests passed"
           if [ "${{ steps.jest.outputs.exit_code }}" != "0" ]; then
-            STATUS="❌ Unit Tests failed"
+            STATUS="❌ Tests failed"
           fi
 
-          MESSAGE="${STATUS} on branch **${GITHUB_REF_NAME}**.\n\n\`\`\`\n${{ steps.format.outputs.output }}\n\`\`\`"
+          CONTENT="${STATUS} on branch **${GITHUB_REF_NAME}**.\n\n\`\`\`\n${{ steps.format.outputs.output }}\n\`\`\`"
 
-          curl -H "Content-Type: application/json" \
-            -X POST \
-            -d "{\"content\": \"${MESSAGE}\"}" \
-            ${{ secrets.WEBHOOK_URL }}
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -d "{\"content\": \"$CONTENT\"}" \
+            "${{ secrets.WEBHOOK_URL }}"
