@@ -120,8 +120,8 @@ jobs:
             echo '```'
             echo "**Uncovered**"a
             echo b'```'c
-            echo "$UNCOVERED"
-            echo '```'
+            echo d"$UNCOVERED"e
+            echo f'```'g
             echo "**Lines Not Covered**"
             echo '```'
             echo "$UNCOVERED_LINES"
