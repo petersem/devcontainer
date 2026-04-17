@@ -171,17 +171,6 @@ jobs:
           #       -d @- \
           #       "$GOTIFY_URL/message?token=$GOTIFY_TOKEN"          
 
-          # # Send to ntfy
-          # jq -n \
-          #   --rawfile msg message.txt \
-          #   --arg title "Unit Test Results: $PROJECT_NAME" \
-          #   '{title: $title, message: $msg, priority: 5}' \
-          #   | curl -X POST \
-          #       -H "Content-Type: application/json" \
-          #       -H "Authorization: Bearer $NTFY_TOKEN" \
-          #       -d @- \
-          #       "$NTFY_URL"  
-
           # Send to ntfy (Markdown-compatible)
           curl -X POST \
               -H "Title: Unit Test Results: $PROJECT_NAME" \
