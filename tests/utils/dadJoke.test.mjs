@@ -1,3 +1,5 @@
+import { jest } from '@jest/globals';
+
 describe("icanhazdadjoke.com API (live test)", () => {
   // Allow slow network calls (GitHub Actions can be slow)
   jest.setTimeout(10000);
