@@ -37,8 +37,8 @@ jobs:
           EXIT_CODE: ${{ steps.jest.outputs.exit_code }}
           BRANCH: ${{ github.ref_name }}
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-          GOTIFY_URL: ${{ secrets.GOTIFY_URL }}        
-          GOTIFY_TOKEN: ${{ secrets.GOTIFY_TOKEN }}    
+          # GOTIFY_URL: ${{ secrets.GOTIFY_URL }}        
+          # GOTIFY_TOKEN: ${{ secrets.GOTIFY_TOKEN }}    
         run: |
           PROJECT_NAME=$(jq -r '.name' package.json)
 
@@ -50,13 +50,23 @@ jobs:
           ' jest-results.json)
 
           DETAILS=$(jq -r '
-            .testResults[]
-            | .assertionResults[]
-            | if .status == "passed" then
-                "✅ PASSED - \(.fullName)"
-              else
-                "❌ FAILED - \(.fullName)"
-              end
+            .testResults
+            | map(
+                "# File: \(.name)\n"
+                +
+                (
+                  .assertionResults
+                  | map(
+                      if .status == "passed" then
+                        "  ✅ PASSED - \(.fullName)"
+                      else
+                        "  ❌ FAILED - \(.fullName)"
+                      end
+                    )
+                  | join("\n")
+                )
+              )
+            | join("\n\n")
           ' jest-results.json)
 
           COVERAGE=$(jq -r '
@@ -148,12 +158,12 @@ jobs:
                   -d @- \
                   "$WEBHOOK_URL"
 
-          # Send to Gotify
-          jq -n \
-            --rawfile msg message.txt \
-            --arg title "Unit Test Results: $PROJECT_NAME" \
-            '{title: $title, message: $msg, priority: 5}' \
-            | curl -X POST \
-                -H "Content-Type: application/json" \
-                -d @- \
-                "$GOTIFY_URL/message?token=$GOTIFY_TOKEN"            
+          # # Send to Gotify
+          # jq -n \
+          #   --rawfile msg message.txt \
+          #   --arg title "Unit Test Results: $PROJECT_NAME" \
+          #   '{title: $title, message: $msg, priority: 5}' \
+          #   | curl -X POST \
+          #       -H "Content-Type: application/json" \
+          #       -d @- \
+          #       "$GOTIFY_URL/message?token=$GOTIFY_TOKEN"            
