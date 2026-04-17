@@ -59,3 +59,33 @@ jobs:
             echo "details<<EOF"
             echo "$DETAILS_ESCAPED"
             echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Send discord notification
+        if: always()
+        run: |
+          STATUS="✅ UnitTests passed"
+          if [ "${{ steps.jest.outputs.exit_code }}" != "0" ]; then
+            STATUS="❌ UnitTests failed"
+          fi
+
+          MESSAGE="${STATUS} on branch **${GITHUB_REF_NAME}**.
+
+**Summary**
+\`\`\`
+${{ steps.parsed.outputs.summary }}
+\`\`\`
+
+**Details**
+\`\`\`
+${{ steps.parsed.outputs.details }}
+\`\`\`
+"
+
+          # Escape message for JSON
+          ESCAPED=$(printf '%s' "$MESSAGE" | sed 's/"/\\"/g')
+
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\": \"$ESCAPED\"}" \
+            ${{ secrets.WEBHOOK_URL }}
