@@ -30,9 +30,14 @@ jobs:
           echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
           set -e
 
-      - name: Parse Jest results
-        id: parsed
+      - name: Send discord notification
+        if: always()
+        env:
+          EXIT_CODE: ${{ steps.jest.outputs.exit_code }}
+          BRANCH: ${{ github.ref_name }}
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
         run: |
+          # Build summary counts
           SUMMARY=$(jq -r '
             .testResults
             | group_by(.status)
@@ -40,29 +45,12 @@ jobs:
             | join("\n")
           ' jest-results.json)
 
+          # Build detailed per-test lines
           DETAILS=$(jq -r '
             .testResults[]
             | "\(.name): \(.status)"
           ' jest-results.json)
 
-          {
-            echo "summary<<EOF"
-            echo "$SUMMARY"
-            echo "EOF"
-            echo "details<<EOF"
-            echo "$DETAILS"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
-
-      - name: Send discord notification
-        if: always()
-        env:
-          SUMMARY: ${{ steps.parsed.outputs.summary }}
-          DETAILS: ${{ steps.parsed.outputs.details }}
-          EXIT_CODE: ${{ steps.jest.outputs.exit_code }}
-          BRANCH: ${{ github.ref_name }}
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-        run: |
           if [ "$EXIT_CODE" = "0" ]; then
             STATUS="✅ UnitTests passed"
           else
