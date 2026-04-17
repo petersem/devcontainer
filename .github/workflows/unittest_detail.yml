@@ -40,6 +40,7 @@ jobs:
           # GOTIFY_URL: ${{ secrets.GOTIFY_URL }}
           # GOTIFY_TOKEN: ${{ secrets.GOTIFY_TOKEN }}
           NTFY_URL: ${{ secrets.NTFY_URL }}
+          NTFY_TOKEN: ${{ NTFY_TOKEN }}
         run: |
           PROJECT_NAME=$(jq -r '.name' package.json)
 
@@ -177,5 +178,6 @@ jobs:
             '{title: $title, message: $msg, priority: 5}' \
             | curl -X POST \
                 -H "Content-Type: application/json" \
+                -H "Authorization: Bearer $NTFY_TOKEN" \
                 -d @- \
                 "$NTFY_URL"  
