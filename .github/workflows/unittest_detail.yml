@@ -36,10 +36,10 @@ jobs:
         env:
           EXIT_CODE: ${{ steps.jest.outputs.exit_code }}
           BRANCH: ${{ github.ref_name }}
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+          # WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
           # GOTIFY_URL: ${{ secrets.GOTIFY_URL }}
           # GOTIFY_TOKEN: ${{ secrets.GOTIFY_TOKEN }}
-          NTFY_URL = ${{ secrets.NTFY_URL }}
+          NTFY_URL: ${{ secrets.NTFY_URL }}
         run: |
           PROJECT_NAME=$(jq -r '.name' package.json)
 
