@@ -62,6 +62,22 @@ jobs:
             | "Statements: \(.statements.pct)%\nBranches: \(.branches.pct)%\nFunctions: \(.functions.pct)%\nLines: \(.lines.pct)%"
           ' coverage/coverage-summary.json)
 
+          # Uncovered code
+          UNCOVERED=$(jq -r '
+            to_entries
+            | map(
+                .key as $file
+                | .value as $cov
+                | select(
+                    ($cov.lines.pct // 100) < 100 or
+                    ($cov.functions.pct // 100) < 100 or
+                    ($cov.branches.pct // 100) < 100
+                  )
+                | "\($file)\n  Lines: \($cov.lines.pct // 0)%\n  Functions: \($cov.functions.pct // 0)%\n  Branches: \($cov.branches.pct // 0)%"
+              )
+            | join("\n\n")
+          ' coverage/coverage-final.json)
+
           # Uncovered lines
             UNCOVERED_LINES=$(jq -r '
               to_entries
@@ -82,22 +98,6 @@ jobs:
               | join("\n\n")
             ' coverage/coverage-final.json)
 
-          # Uncovered code
-          UNCOVERED=$(jq -r '
-            to_entries
-            | map(
-                .key as $file
-                | .value as $cov
-                | select(
-                    ($cov.lines.pct // 100) < 100 or
-                    ($cov.functions.pct // 100) < 100 or
-                    ($cov.branches.pct // 100) < 100
-                  )
-                | "\($file)\n  Lines: \($cov.lines.pct // 0)%\n  Functions: \($cov.functions.pct // 0)%\n  Branches: \($cov.branches.pct // 0)%"
-              )
-            | join("\n\n")
-          ' coverage/coverage-final.json)
-
           # Decide status
           if [ "$EXIT_CODE" = "0" ]; then
             STATUS="✅ UnitTests passed"
@@ -117,8 +117,8 @@ jobs:
             echo "**Coverage**"
             echo '```'
             echo "$COVERAGE"
-            echo '```'
-            echo "**Uncovered**"
+            echo '```'d
+            echo "e**Uncovered**"
             echo '```'
             echo "$UNCOVERED"
             echo '```'
