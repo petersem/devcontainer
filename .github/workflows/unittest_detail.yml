@@ -82,7 +82,8 @@ jobs:
           UNCOVERED_LINES=$(jq -r '
             to_entries
             | map(
-                .key as $file
+                .key as $fileRaw
+                | ($fileRaw | gsub("^/"; "\\/")) as $file
                 | .value as $cov
                 | ($cov.s // {}) as $counts
                 | ($cov.statementMap // {}) as $stmts
@@ -93,7 +94,7 @@ jobs:
                     | .value.start.line
                   ]
                 | select(length > 0)
-                | "\($file | gsub("[`*_#()]"; "")) — Uncovered lines: \(join(", "))"
+                | "\($file) — Uncovered lines: \(join(", "))"
               )
             | join("\n")
           ' coverage/coverage-final.json)
