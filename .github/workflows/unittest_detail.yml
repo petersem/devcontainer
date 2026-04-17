@@ -30,14 +30,13 @@ jobs:
           echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
           set -e
 
-      - name: Parse Jest results for Discord
+      - name: Parse Jest results
         id: parsed
         run: |
           SUMMARY=$(jq -r '
             .testResults
             | group_by(.status)
-            | map({status: .[0].status, count: length})
-            | map("\(.status): \(.count)")
+            | map("\(.[0].status): \(length)")
             | join("\n")
           ' jest-results.json)
 
@@ -72,7 +71,7 @@ jobs:
 
           MESSAGE="${STATUS} on branch **${BRANCH}**.
 
-**Summary** 
+**Summary**
 \`\`\`
 $SUMMARY
 \`\`\`
