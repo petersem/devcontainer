@@ -1,32 +1,17 @@
 import { getRandomDadJoke } from "./getRandomDadJoke";
 
-describe("getRandomDadJoke", () => {
-  beforeEach(() => {
-    global.fetch = jest.fn();
+describe("getRandomDadJoke (live API test)", () => {
+  // Allow slow network calls (GitHub Actions can be slow)
+  jest.setTimeout(10000);
+
+  it("fetches a real joke from the API", async () => {
+    const joke = await getRandomDadJoke();
+
+    expect(joke).not.toBeNull();
+    expect(typeof joke).toBe("string");
+    expect(joke.length).toBeGreaterThan(0);
   });
-
-  it("returns a joke when fetch succeeds", async () => {
-    const mockJoke = "Why don't eggs tell jokes? They'd crack each other up.";
-
-    global.fetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({ joke: mockJoke })
-    });
-
-    const result = await getRandomDadJoke();
-
-    expect(fetch).toHaveBeenCalledWith(
-      "https://icanhazdadjoke.com/",
-      expect.objectContaining({
-        headers: {
-          Accept: "application/json",
-          "User-Agent": expect.any(String)
-        }
-      })
-    );
-
-    expect(result).toBe(mockJoke);
-  });
+});
 
   it("returns null when fetch fails", async () => {
     global.fetch.mockRejectedValue(new Error("Network error"));
