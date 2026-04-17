@@ -45,3 +45,7 @@ export function sub
     }
     return num1 - num2;
 }
+
+export function somethingNew() {
+    return 4;
+}
