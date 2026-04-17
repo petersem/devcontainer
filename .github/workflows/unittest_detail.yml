@@ -119,10 +119,10 @@ jobs:
             echo '```'
             echo "$COVERAGE"
             echo '```'
-            echo fvfddfdv
-            # echo "**Uncovered**"
+            echo "**Uncovered**"
             echo '```'
-            echo "$UNCOVERED"
+            echo fvfddfdv
+            # echo "$UNCOVERED"
             echo '```'
             echo "**Lines Not Covered**"
             echo '```'
