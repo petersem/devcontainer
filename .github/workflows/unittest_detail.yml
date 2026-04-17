@@ -50,7 +50,11 @@ jobs:
           DETAILS=$(jq -r '
             .testResults[]
             | .assertionResults[]
-            | "\(.status | ascii_upcase) - \(.fullName)"
+            | if .status == "passed" then
+                "✅ PASSED - \(.fullName)"
+              else
+                "❌ FAILED - \(.fullName)"
+              end
           ' jest-results.json)
 
           COVERAGE=$(jq -r '
