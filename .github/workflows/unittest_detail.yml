@@ -36,10 +36,8 @@ jobs:
           BRANCH: ${{ github.ref_name }}
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
         run: |
-          # Load exit code (still useful for debugging)
           source jest-exit-code.env
 
-          # Build summary
           SUMMARY=$(jq -r '
             .testResults
             | group_by(.status)
@@ -47,13 +45,11 @@ jobs:
             | join("\n")
           ' jest-results.json)
 
-          # Build details
           DETAILS=$(jq -r '
             .testResults[]
             | "\(.name): \(.status)"
           ' jest-results.json)
 
-          # Determine pass/fail based on actual test results
           FAILED_COUNT=$(jq '[.testResults[] | select(.status != "passed")] | length' jest-results.json)
 
           if [ "$FAILED_COUNT" -eq 0 ]; then
@@ -62,7 +58,6 @@ jobs:
             STATUS="❌ UnitTests failed"
           fi
 
-          # Build message safely in a file
           {
             echo "$STATUS on branch **$BRANCH**."
             echo
@@ -71,4 +66,22 @@ jobs:
             echo "$SUMMARY"
             echo '```'
             echo
-            echo "**Details
+            echo "**Details**"
+            echo '```'
+            echo "$DETAILS"
+            echo '```'
+          } > message.txt
+
+          # Convert message.txt into a JSON-safe string
+          ESCAPED=$(python3 - << 'EOF'
+import json
+import sys
+text = open("message.txt").read()
+print(json.dumps({"content": text}))
+EOF
+)
+
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "$ESCAPED" \
+               "$WEBHOOK_URL"
