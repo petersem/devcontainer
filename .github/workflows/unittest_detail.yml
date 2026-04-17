@@ -123,35 +123,66 @@ jobs:
             ICON="❌"
           fi
 
+          # {
+          #   echo "# Project: $PROJECT_NAME"
+          #   echo "## Automated Unit Testing"
+          #   echo "### $ICON $STATUS on branch **$BRANCH**."
+
+          #   echo "**Summary**"
+          #   echo '```'
+          #   echo "$SUMMARY"
+          #   echo '```'
+
+          #   echo "**Test Details**"
+          #   echo '```'
+          #   echo "$DETAILS"
+          #   echo '```'
+
+          #   echo "**Coverage**"
+          #   echo '```'
+          #   echo "$COVERAGE"
+          #   echo '```'
+
+          #   echo "**Uncovered**"
+          #   echo '```'
+          #   echo "$UNCOVERED"
+          #   echo '```'
+
+          #   echo "**Lines Not Covered**"
+          #   echo '```'
+          #   echo "$UNCOVERED_LINES"
+          #   echo '```'
+          # } > message.txt
+
           {
-            echo "# Project: $PROJECT_NAME"
-            echo "## Automated Unit Testing"
-            echo "### $ICON $STATUS on branch **$BRANCH**."
+            echo "<h1>Project: $PROJECT_NAME</h1>"
+            echo "<h2>Automated Unit Testing</h2>"
+            echo "<h3>$ICON $STATUS on branch <strong>$BRANCH</strong></h3>"
 
-            echo "**Summary**"
-            echo '```'
+            echo "<h3>Summary</h3>"
+            echo "<pre>"
             echo "$SUMMARY"
-            echo '```'
+            echo "</pre>"
 
-            echo "**Test Details**"
-            echo '```'
+            echo "<h3>Test Details</h3>"
+            echo "<pre>"
             echo "$DETAILS"
-            echo '```'
+            echo "</pre>"
 
-            echo "**Coverage**"
-            echo '```'
+            echo "<h3>Coverage</h3>"
+            echo "<pre>"
             echo "$COVERAGE"
-            echo '```'
+            echo "</pre>"
 
-            echo "**Uncovered**"
-            echo '```'
+            echo "<h3>Uncovered</h3>"
+            echo "<pre>"
             echo "$UNCOVERED"
-            echo '```'
+            echo "</pre>"
 
-            echo "**Lines Not Covered**"
-            echo '```'
+            echo "<h3>Lines Not Covered</h3>"
+            echo "<pre>"
             echo "$UNCOVERED_LINES"
-            echo '```'
+            echo "</pre>"
           } > message.txt
 
           # Send to Discord
