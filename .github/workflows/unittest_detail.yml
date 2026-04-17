@@ -105,23 +105,33 @@ jobs:
             echo "# Project: $PROJECT_NAME"
             echo "## Automated Unit Testing"
             echo "### $ICON $STATUS on branch **$BRANCH**."
-            echo '```'
+
             echo "**Summary**"
+            echo '```'
             echo "$SUMMARY"
-            echo
+            echo '```'
+
             echo "**Coverage**"
+            echo '```'
             echo "$COVERAGE"
-            echo
+            echo '```'
+
             echo "**Uncovered**"
+            echo '```'
             echo "$UNCOVERED"
-            echo
+            echo '```'
+
             echo "**Lines Not Covered**"
+            echo '```'
             echo "$UNCOVERED_LINES"
-            echo
+            echo '```'
+
             echo "**Test Details**"
+            echo '```'
             echo "$DETAILS"
             echo '```'
           } > message.txt
+
 
           jq -n --rawfile content message.txt '{content: $content}' \
             | curl -H "Content-Type: application/json" \
