@@ -117,7 +117,7 @@ jobs:
             echo "**Coverage**"
             echo '```'
             echo "$COVERAGE"
-            echo '```'
+            echo '```'s
             echo "**Uncovered**"
             echo a'```'b
             echo "$UNCOVERED"
