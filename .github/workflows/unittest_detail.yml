@@ -38,10 +38,8 @@ jobs:
           BRANCH: ${{ github.ref_name }}
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
         run: |
-          # project name
           PROJECT_NAME=$(jq -r '.name' package.json)
 
-          # Build summary
           SUMMARY=$(jq -r '
             .testResults
             | group_by(.status)
@@ -49,36 +47,18 @@ jobs:
             | join("\n")
           ' jest-results.json)
 
-          # Build details
           DETAILS=$(jq -r '
             .testResults[]
             | .assertionResults[]
             | "\(.status | ascii_upcase) - \(.fullName)"
           ' jest-results.json)
 
-          # Build coverage
           COVERAGE=$(jq -r '
             .total
             | "Statements: \(.statements.pct)%\nBranches: \(.branches.pct)%\nFunctions: \(.functions.pct)%\nLines: \(.lines.pct)%"
           ' coverage/coverage-summary.json)
 
-          # Uncovered code
-          UNCOVERED=$(jq -r '
-            to_entries
-            | map(
-                .key as $file
-                | .value as $cov
-                | select(
-                    ($cov.lines.pct // 100) < 100 or
-                    ($cov.functions.pct // 100) < 100 or
-                    ($cov.branches.pct // 100) < 100
-                  )
-                | "\($file)\n  Lines: \($cov.lines.pct // 0)%\n  Functions: \($cov.functions.pct // 0)%\n  Branches: \($cov.branches.pct // 0)%"
-              )
-            | join("\n\n")
-          ' coverage/coverage-final.json)
-
-          # Uncovered lines
+          # SAFE UNCOVERED (no em-dash, no unicode, no markdown triggers)
           UNCOVERED=$(jq -r '
             to_entries
             | map(
@@ -88,46 +68,60 @@ jobs:
                 | ($cov.functions.pct // 0) as $funcs
                 | ($cov.branches.pct // 0) as $branches
                 | select($lines < 100 or $funcs < 100 or $branches < 100)
-                | "\($file)\n  Lines: \($lines)\\%\n  Functions: \($funcs)\\%\n  Branches: \($branches)\\%"
+                | "\($file)\n  Lines: \($lines)%\n  Functions: \($funcs)%\n  Branches: \($branches)%"
               )
             | join("\n\n")
           ' coverage/coverage-final.json)
 
-          # Decide status
+          # SAFE UNCOVERED LINES (no em-dash, no unicode, no markdown triggers)
+          UNCOVERED_LINES=$(jq -r '
+            to_entries
+            | map(
+                .key as $file
+                | ($cov.s // {}) as $counts
+                | ($cov.statementMap // {}) as $stmts
+                | [
+                    $stmts
+                    | to_entries[]
+                    | select(($counts[.key|tostring] // 1) == 0)
+                    | .value.start.line
+                  ]
+                | select(length > 0)
+                | "\($file) - Uncovered lines: \(join(", "))"
+              )
+            | join("\n")
+          ' coverage/coverage-final.json)
+
           if [ "$EXIT_CODE" = "0" ]; then
-            STATUS="✅ UnitTests passed"
+            STATUS="UnitTests passed"
+            ICON="✅"
           else
-            STATUS="❌ UnitTests failed"
+            STATUS="UnitTests failed"
+            ICON="❌"
           fi
 
-          # Write message to a file (avoids YAML parsing issues)
           {
             echo "# Project: $PROJECT_NAME"
             echo "## Automated Unit Testing"
-            echo "### $STATUS on branch **$BRANCH**."
+            echo "### $ICON $STATUS on branch **$BRANCH**."
+            echo '```'
             echo "**Summary**"
-            echo '```'
             echo "$SUMMARY"
-            echo '```'
+            echo
             echo "**Coverage**"
-            echo '```'
             echo "$COVERAGE"
-            echo '```'
+            echo
             echo "**Uncovered**"
-            echo '```'
             echo "$UNCOVERED"
-            echo '```'
+            echo
             echo "**Lines Not Covered**"
-            echo '```'
             echo "$UNCOVERED_LINES"
-            echo '```'
+            echo
             echo "**Test Details**"
-            echo '```'
             echo "$DETAILS"
             echo '```'
           } > message.txt
 
-          # Send to Discord using jq to build JSON
           jq -n --rawfile content message.txt '{content: $content}' \
             | curl -H "Content-Type: application/json" \
                   -X POST \
