@@ -38,6 +38,9 @@ jobs:
           BRANCH: ${{ github.ref_name }}
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
         run: |
+          # project name
+          PROJECT_NAME=$(jq -r '.name' package.json)
+
           # Build summary
           SUMMARY=$(jq -r '
             .testResults
@@ -68,7 +71,10 @@ jobs:
 
           # Write message to a file (avoids YAML parsing issues)
           {
-            echo "$STATUS on branch **$BRANCH**."
+            echo "# Automated Unit Testing"
+            echo "## Project: $PROJECT_NAME"
+            echo
+            echo "### $STATUS on branch **$BRANCH**."
             echo
             echo "**Summary**"
             echo '```'
