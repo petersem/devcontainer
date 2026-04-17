@@ -1,59 +1,87 @@
-name: Run Jest and Notify (Discord)
+name: Jest Tests
 
 on:
   push:
+    branches:
+      - 'main'
 
 jobs:
   test-and-notify:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repo
+      - name: Checkout repo
         uses: actions/checkout@v4
-
-      - name: Set up Node
+        
+      - name: Set up node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-
+          
       - name: Install dependencies
         run: npm ci
-
+        
       - name: Run Jest tests
         id: jest
         run: |
           set +e
-          npm test -- --verbose > jest-output.txt 2>&1
-          EXIT_CODE=$?
-          echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
+          npm test -- --json --outputFile=jest-results.json
+          echo "exit_code=$?" >> $GITHUB_OUTPUT
           set -e
 
-      - name: Prepare Discord message
-        id: format
+      - name: Parse Jest results for Discord
+        id: parsed
         run: |
-          # Escape backticks so Discord doesn't break the code block
-          ESCAPED=$(sed 's/`/\\`/g' jest-output.txt)
+          # Summary counts
+          SUMMARY=$(jq -r '
+            .testResults
+            | group_by(.status)
+            | map({status: .[0].status, count: length})
+            | map("\(.status): \(.count)")
+            | join("\n")
+          ' jest-results.json)
 
-          # Trim to avoid Discord 2000-char limit
-          TRIMMED=$(echo "$ESCAPED" | head -c 1800)
+          # Detailed per-test output
+          DETAILS=$(jq -r '
+            .testResults[]
+            | "\(.name): \(.status)"
+          ' jest-results.json)
+
+          # Escape quotes for JSON
+          SUMMARY_ESCAPED=$(printf "%s" "$SUMMARY" | sed 's/"/\\"/g')
+          DETAILS_ESCAPED=$(printf "%s" "$DETAILS" | sed 's/"/\\"/g')
 
           {
-            echo "output<<EOF"
-            echo "$TRIMMED"
+            echo "summary<<EOF"
+            echo "$SUMMARY_ESCAPED"
+            echo "EOF"
+            echo "details<<EOF"
+            echo "$DETAILS_ESCAPED"
             echo "EOF"
           } >> $GITHUB_OUTPUT
 
-      - name: Send Discord notification
+      - name: Send discord notification
         if: always()
         run: |
-          STATUS="✅ Tests passed"
+          STATUS="✅ UnitTests passed"
           if [ "${{ steps.jest.outputs.exit_code }}" != "0" ]; then
-            STATUS="❌ Tests failed"
+            STATUS="❌ UnitTests failed"
           fi
 
-          CONTENT="${STATUS} on branch **${GITHUB_REF_NAME}**.\n\n\`\`\`\n${{ steps.format.outputs.output }}\n\`\`\`"
+          MESSAGE="${STATUS} on branch **${GITHUB_REF_NAME}**.
 
-          curl -X POST \
-            -H "Content-Type: application/json" \
-            -d "{\"content\": \"$CONTENT\"}" \
-            "${{ secrets.WEBHOOK_URL }}"
+**Summary:**
+\`\`\`
+${{ steps.parsed.outputs.summary }}
+\`\`\`
+
+**Details:**
+\`\`\`
+${{ steps.parsed.outputs.details }}
+\`\`\`
+"
+
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\": \"$MESSAGE\"}" \
+            ${{ secrets.WEBHOOK_URL }}
