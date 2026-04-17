@@ -118,10 +118,10 @@ jobs:
             echo '```'
             echo "$COVERAGE"
             echo '```'
-            echo "**Uncovered**"a
-            echo b'```'c
-            echo d"$UNCOVERED"e
-            echo f'```'g
+            echo "**Uncovered**"
+            echo a'```'b
+            echo "$UNCOVERED"
+            echo '```'
             echo "**Lines Not Covered**"
             echo '```'
             echo "$UNCOVERED_LINES"
