@@ -33,13 +33,11 @@ jobs:
       - name: Send discord notification
         if: always()
         env:
+          EXIT_CODE: ${{ steps.jest.outputs.exit_code }}
           BRANCH: ${{ github.ref_name }}
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
         run: |
-          # Load exit code from previous step
-          source jest-exit-code.env
-
-          # Build summary counts
+          # Build summary
           SUMMARY=$(jq -r '
             .testResults
             | group_by(.status)
@@ -47,32 +45,36 @@ jobs:
             | join("\n")
           ' jest-results.json)
 
-          # Build detailed per-test lines
+          # Build details
           DETAILS=$(jq -r '
             .testResults[]
             | "\(.name): \(.status)"
           ' jest-results.json)
 
+          # Decide status
           if [ "$EXIT_CODE" = "0" ]; then
             STATUS="✅ UnitTests passed"
           else
             STATUS="❌ UnitTests failed"
           fi
 
-          MESSAGE="${STATUS} on branch **${BRANCH}**.
+          # Write message to a file (avoids YAML parsing issues)
+          {
+            echo "$STATUS on branch **$BRANCH**."
+            echo
+            echo "**Summary**"
+            echo '```'
+            echo "$SUMMARY"
+            echo '```'
+            echo
+            echo "**Details**"
+            echo '```'
+            echo "$DETAILS"
+            echo '```'
+          } > message.txt
 
-**Summary**
-\`\`\`
-$SUMMARY
-\`\`\`
-
-**Details**
-\`\`\`
-$DETAILS
-\`\`\`
-"
-
-          jq -n --arg content "$MESSAGE" '{content: $content}' \
+          # Send to Discord using jq to build JSON
+          jq -n --rawfile content message.txt '{content: $content}' \
             | curl -H "Content-Type: application/json" \
                   -X POST \
                   -d @- \
