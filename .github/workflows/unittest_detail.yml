@@ -26,7 +26,7 @@ jobs:
         id: jest
         run: |
           set +e
-          npm test -- --json --outputFile=jest-results.json
+          npm test -- --json --outputFile=jest-results.json --coverage --coverageReporters=json-summary
           EXIT_CODE=$?
           echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
           set -e
@@ -49,8 +49,15 @@ jobs:
           # Build details
           DETAILS=$(jq -r '
             .testResults[]
-            | "\(.name): \(.status)"
+            | .assertionResults[]
+            | "\(.status | ascii_upcase) - \(.fullName)"
           ' jest-results.json)
+
+          # Build coverage
+          COVERAGE=$(jq -r '
+            .total
+            | "Statements: \(.statements.pct)%\nBranches: \(.branches.pct)%\nFunctions: \(.functions.pct)%\nLines: \(.lines.pct)%"
+          ' coverage/coverage-summary.json)
 
           # Decide status
           if [ "$EXIT_CODE" = "0" ]; then
@@ -68,7 +75,12 @@ jobs:
             echo "$SUMMARY"
             echo '```'
             echo
-            echo "**Details**"
+            echo "**Coverage**"
+            echo '```'
+            echo "$COVERAGE"
+            echo '```'
+            echo
+            echo "**Test Details**"
             echo '```'
             echo "$DETAILS"
             echo '```'
