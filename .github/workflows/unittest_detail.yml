@@ -111,6 +111,11 @@ jobs:
             echo "$SUMMARY"
             echo '```'
 
+            echo "**Test Details**"
+            echo '```'
+            echo "$DETAILS"
+            echo '```'
+
             echo "**Coverage**"
             echo '```'
             echo "$COVERAGE"
@@ -125,13 +130,7 @@ jobs:
             echo '```'
             echo "$UNCOVERED_LINES"
             echo '```'
-
-            echo "**Test Details**"
-            echo '```'
-            echo "$DETAILS"
-            echo '```'
           } > message.txt
-
 
           jq -n --rawfile content message.txt '{content: $content}' \
             | curl -H "Content-Type: application/json" \

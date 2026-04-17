@@ -1,5 +1,5 @@
 {
-  "name": "jsdemo",
+  "name": "devcontainer",
   "version": "1.0.0",
   "description": "just a demo project using docker dev containers",
   "license": "ISC",
