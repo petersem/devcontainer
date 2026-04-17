@@ -114,10 +114,10 @@ jobs:
             echo '```'
             echo "$SUMMARY"
             echo '```'
-            # echo "**Coverage**"
-            # echo '```'
-            # echo "$COVERAGE"
-            # echo '```'
+            echo "**Coverage**"
+            echo '```'
+            echo "$COVERAGE"
+            echo '```'
             echo "**Uncovered**"
             echo '```'
             echo "$UNCOVERED"
