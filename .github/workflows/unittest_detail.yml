@@ -79,24 +79,18 @@ jobs:
           ' coverage/coverage-final.json)
 
           # Uncovered lines
-          UNCOVERED_LINES=$(jq -r '
+          UNCOVERED=$(jq -r '
             to_entries
             | map(
-                .key as $fileRaw
-                | ($fileRaw | gsub("^/"; "\\/")) as $file
+                .key as $file
                 | .value as $cov
-                | ($cov.s // {}) as $counts
-                | ($cov.statementMap // {}) as $stmts
-                | [
-                    $stmts
-                    | to_entries[]
-                    | select(($counts[.key|tostring] // 1) == 0)
-                    | .value.start.line
-                  ]
-                | select(length > 0)
-                | "\($file) — Uncovered lines: \(join(", "))"
+                | ($cov.lines.pct // 0) as $lines
+                | ($cov.functions.pct // 0) as $funcs
+                | ($cov.branches.pct // 0) as $branches
+                | select($lines < 100 or $funcs < 100 or $branches < 100)
+                | "\($file)\n  Lines: \($lines)\\%\n  Functions: \($funcs)\\%\n  Branches: \($branches)\\%"
               )
-            | join("\n")
+            | join("\n\n")
           ' coverage/coverage-final.json)
 
           # Decide status
@@ -121,8 +115,7 @@ jobs:
             echo '```'
             echo "**Uncovered**"
             echo '```'
-            echo fvfddfdv
-            # echo "$UNCOVERED"
+            echo "$UNCOVERED"
             echo '```'
             echo "**Lines Not Covered**"
             echo '```'
