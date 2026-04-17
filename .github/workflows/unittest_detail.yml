@@ -37,6 +37,8 @@ jobs:
           EXIT_CODE: ${{ steps.jest.outputs.exit_code }}
           BRANCH: ${{ github.ref_name }}
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+          GOTIFY_URL: ${{ secrets.GOTIFY_URL }}        
+          GOTIFY_TOKEN: ${{ secrets.GOTIFY_TOKEN }}    
         run: |
           PROJECT_NAME=$(jq -r '.name' package.json)
 
@@ -145,13 +147,6 @@ jobs:
                   -X POST \
                   -d @- \
                   "$WEBHOOK_URL"
-
-
-          env:
-            EXIT_CODE: ${{ steps.jest.outputs.exit_code }}
-            BRANCH: ${{ github.ref_name }}
-            GOTIFY_URL: ${{ secrets.GOTIFY_URL }}        # e.g. https://gotify.example.com
-            GOTIFY_TOKEN: ${{ secrets.GOTIFY_TOKEN }}    # your app token
 
           # Send to Gotify
           jq -n \
