@@ -10,7 +10,7 @@ afterAll(() => {
     y = 0;
 });
 
-describe('Setup before testing', () => {
+describe('Setup before testing - int', () => {
     test('did setup run', () => {
         expect(y).toBe(9);
     });
