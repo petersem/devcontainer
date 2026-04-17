@@ -37,8 +37,9 @@ jobs:
           EXIT_CODE: ${{ steps.jest.outputs.exit_code }}
           BRANCH: ${{ github.ref_name }}
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-          # GOTIFY_URL: ${{ secrets.GOTIFY_URL }}        
-          # GOTIFY_TOKEN: ${{ secrets.GOTIFY_TOKEN }}    
+          # GOTIFY_URL: ${{ secrets.GOTIFY_URL }}
+          # GOTIFY_TOKEN: ${{ secrets.GOTIFY_TOKEN }}
+          NTFY_URL = ${{ secrets.NTFY_URL }}
         run: |
           PROJECT_NAME=$(jq -r '.name' package.json)
 
@@ -152,13 +153,14 @@ jobs:
             echo '```'
           } > message.txt
 
-          jq -n --rawfile content message.txt '{content: $content}' \
-            | curl -H "Content-Type: application/json" \
-                  -X POST \
-                  -d @- \
-                  "$WEBHOOK_URL"
+          # Send to Discord
+          # jq -n --rawfile content message.txt '{content: $content}' \
+          #   | curl -H "Content-Type: application/json" \
+          #         -X POST \
+          #         -d @- \
+          #         "$WEBHOOK_URL"
 
-          # # Send to Gotify
+          # Send to Gotify
           # jq -n \
           #   --rawfile msg message.txt \
           #   --arg title "Unit Test Results: $PROJECT_NAME" \
@@ -166,4 +168,14 @@ jobs:
           #   | curl -X POST \
           #       -H "Content-Type: application/json" \
           #       -d @- \
-          #       "$GOTIFY_URL/message?token=$GOTIFY_TOKEN"            
+          #       "$GOTIFY_URL/message?token=$GOTIFY_TOKEN"          
+
+          # Send to ntfy
+          jq -n \
+            --rawfile msg message.txt \
+            --arg title "Unit Test Results: $PROJECT_NAME" \
+            '{title: $title, message: $msg, priority: 5}' \
+            | curl -X POST \
+                -H "Content-Type: application/json" \
+                -d @- \
+                "$NTFY_URL"  
