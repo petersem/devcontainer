@@ -93,9 +93,9 @@ jobs:
                     | .value.start.line
                   ]
                 | select(length > 0)
-                | "\($file | gsub("[`*_#()]"; "")):\n  Uncovered lines: \(join(", "))"
+                | "\($file | gsub("[`*_#()]"; "")) — Uncovered lines: \(join(", "))"
               )
-            | join("\n\n")
+            | join("\n")
           ' coverage/coverage-final.json)
 
           # Decide status
