@@ -1,4 +1,4 @@
-import { getRandomDadJoke } from "./getRandomDadJoke";
+import { getRandomDadJoke } from "./../../src/index.mjs";
 
 describe("getRandomDadJoke (live API test)", () => {
   // Allow slow network calls (GitHub Actions can be slow)
