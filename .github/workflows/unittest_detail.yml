@@ -40,7 +40,7 @@ jobs:
           # GOTIFY_URL: ${{ secrets.GOTIFY_URL }}
           # GOTIFY_TOKEN: ${{ secrets.GOTIFY_TOKEN }}
           NTFY_URL: ${{ secrets.NTFY_URL }}
-          NTFY_TOKEN: ${{ NTFY_TOKEN }}
+          NTFY_TOKEN: ${{ secrets.NTFY_TOKEN }}
         run: |
           PROJECT_NAME=$(jq -r '.name' package.json)
 
