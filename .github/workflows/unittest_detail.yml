@@ -71,21 +71,17 @@ jobs:
 
           # Write message to a file (avoids YAML parsing issues)
           {
-            echo "# Automated Unit Testing"
-            echo "## Project: $PROJECT_NAME"
-            echo
+            echo "# Project: $PROJECT_NAME"
+            echo "## Automated Unit Testing"
             echo "### $STATUS on branch **$BRANCH**."
-            echo
             echo "**Summary**"
             echo '```'
             echo "$SUMMARY"
             echo '```'
-            echo
             echo "**Coverage**"
             echo '```'
             echo "$COVERAGE"
             echo '```'
-            echo
             echo "**Test Details**"
             echo '```'
             echo "$DETAILS"
