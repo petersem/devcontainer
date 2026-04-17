@@ -36,11 +36,11 @@ jobs:
         env:
           EXIT_CODE: ${{ steps.jest.outputs.exit_code }}
           BRANCH: ${{ github.ref_name }}
-          # WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
           # GOTIFY_URL: ${{ secrets.GOTIFY_URL }}
           # GOTIFY_TOKEN: ${{ secrets.GOTIFY_TOKEN }}
-          NTFY_URL: ${{ secrets.NTFY_URL }}
-          NTFY_TOKEN: ${{ secrets.NTFY_TOKEN }}
+          # NTFY_URL: ${{ secrets.NTFY_URL }}
+          # NTFY_TOKEN: ${{ secrets.NTFY_TOKEN }}
         run: |
           PROJECT_NAME=$(jq -r '.name' package.json)
 
@@ -155,11 +155,11 @@ jobs:
           } > message.txt
 
           # Send to Discord
-          # jq -n --rawfile content message.txt '{content: $content}' \
-          #   | curl -H "Content-Type: application/json" \
-          #         -X POST \
-          #         -d @- \
-          #         "$WEBHOOK_URL"
+          jq -n --rawfile content message.txt '{content: $content}' \
+            | curl -H "Content-Type: application/json" \
+                  -X POST \
+                  -d @- \
+                  "$WEBHOOK_URL"
 
           # Send to Gotify
           # jq -n \
@@ -172,10 +172,10 @@ jobs:
           #       "$GOTIFY_URL/message?token=$GOTIFY_TOKEN"          
 
           # Send to ntfy (Markdown-compatible)
-          curl -X POST \
-              -H "Title: Unit Test Results: $PROJECT_NAME" \
-              -H "Priority: 5" \
-              -H "Authorization: Bearer $NTFY_TOKEN" \
-              --data-binary @message.txt \
-              "$NTFY_URL"
+          # curl -X POST \
+          #     -H "Title: Unit Test Results: $PROJECT_NAME" \
+          #     -H "Priority: 5" \
+          #     -H "Authorization: Bearer $NTFY_TOKEN" \
+          #     --data-binary @message.txt \
+          #     "$NTFY_URL"
 
