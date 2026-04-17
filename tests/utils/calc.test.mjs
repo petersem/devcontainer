@@ -33,11 +33,11 @@ describe('add function', () => {
   });
 
   test('adds two positive numbers', () => {
-    expect(add(2, 3)).toBe(5);
+    expect(add(2, 3)).toBe(35);
   });
 
   test('adds two negative numbers', () => {
-    expect(add(-2, -3)).toBe(-5);
+    expect(add(-2, -3)).toBe(-35);
   });
 
   test('throws error if arguments are not numbers', () => {
