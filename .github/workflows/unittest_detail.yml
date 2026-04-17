@@ -33,23 +33,13 @@ jobs:
       - name: Send discord notification
         if: always()
         env:
+          SUMMARY: ${{ steps.parsed.outputs.summary }}
+          DETAILS: ${{ steps.parsed.outputs.details }}
+          EXIT_CODE: ${{ steps.jest.outputs.exit_code }}
           BRANCH: ${{ github.ref_name }}
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
         run: |
-          source jest-exit-code.env
-
-          SUMMARY=$(jq -r '
-            .testResults
-            | group_by(.status)
-            | map("\(.[0].status): \(length)")
-            | join("\n")
-          ' jest-results.json)
-
-          DETAILS=$(jq -r '
-            .testResults[]
-            | "\(.name): \(.status)"
-          ' jest-results.json)
-
+          # Determine pass/fail based on actual test results, not exit code
           FAILED_COUNT=$(jq '[.testResults[] | select(.status != "passed")] | length' jest-results.json)
 
           if [ "$FAILED_COUNT" -eq 0 ]; then
@@ -58,30 +48,21 @@ jobs:
             STATUS="❌ UnitTests failed"
           fi
 
-          {
-            echo "$STATUS on branch **$BRANCH**."
-            echo
-            echo "**Summary**"
-            echo '```'
-            echo "$SUMMARY"
-            echo '```'
-            echo
-            echo "**Details**"
-            echo '```'
-            echo "$DETAILS"
-            echo '```'
-          } > message.txt
+          MESSAGE="${STATUS} on branch **${BRANCH}**.
 
-          # Convert message.txt into a JSON-safe string
-          ESCAPED=$(python3 - << 'EOF'
-import json
-import sys
-text = open("message.txt").read()
-print(json.dumps({"content": text}))
-EOF
-)
+**Summary**
+\`\`\`
+$SUMMARY
+\`\`\`
 
-          curl -H "Content-Type: application/json" \
-               -X POST \
-               -d "$ESCAPED" \
-               "$WEBHOOK_URL"
+**Details**
+\`\`\`
+$DETAILS
+\`\`\`
+"
+
+          jq -n --arg content "$MESSAGE" '{content: $content}' \
+            | curl -H "Content-Type: application/json" \
+                  -X POST \
+                  -d @- \
+                  "$WEBHOOK_URL"
