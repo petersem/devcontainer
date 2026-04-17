@@ -62,6 +62,20 @@ jobs:
             | "Statements: \(.statements.pct)%\nBranches: \(.branches.pct)%\nFunctions: \(.functions.pct)%\nLines: \(.lines.pct)%"
           ' coverage/coverage-summary.json)
 
+          # Uncovered code
+          UNCOVERED=$(jq -r '
+            to_entries
+            | map(
+                select(
+                  .value.lines.pct < 100
+                  or .value.functions.pct < 100
+                  or .value.branches.pct < 100
+                )
+                | "\(.key)\n  Lines: \(.value.lines.pct)%\n  Functions: \(.value.functions.pct)%\n  Branches: \(.value.branches.pct)%"
+              )
+            | join("\n\n")
+          ' coverage/coverage-final.json)
+
           # Decide status
           if [ "$EXIT_CODE" = "0" ]; then
             STATUS="✅ UnitTests passed"
@@ -81,6 +95,8 @@ jobs:
             echo "**Coverage**"
             echo '```'
             echo "$COVERAGE"
+            echo '```'
+            echo "$UNCOVERED"
             echo '```'
             echo "**Test Details**"
             echo '```'
