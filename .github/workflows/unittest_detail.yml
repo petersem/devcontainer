@@ -94,7 +94,11 @@ jobs:
                 | select(length > 0)
                 | "\($file) - Uncovered lines: \(join(", "))"
               )
-            | join("\n")
+            | if length == 0 then
+                "No uncovered lines 🎉"
+              else
+                join("\n")
+              end
           ' coverage/coverage-final.json)
 
           if [ "$EXIT_CODE" = "0" ]; then
