@@ -72,7 +72,7 @@ jobs:
 
           MESSAGE="${STATUS} on branch **${BRANCH}**.
 
-**Summary**
+**Summary** 
 \`\`\`
 $SUMMARY
 \`\`\`
