@@ -33,35 +33,48 @@ jobs:
       - name: Send discord notification
         if: always()
         env:
-          SUMMARY: ${{ steps.parsed.outputs.summary }}
-          DETAILS: ${{ steps.parsed.outputs.details }}
           EXIT_CODE: ${{ steps.jest.outputs.exit_code }}
           BRANCH: ${{ github.ref_name }}
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
         run: |
-          # Determine pass/fail based on actual test results, not exit code
-          FAILED_COUNT=$(jq '[.testResults[] | select(.status != "passed")] | length' jest-results.json)
+          # Build summary
+          SUMMARY=$(jq -r '
+            .testResults
+            | group_by(.status)
+            | map("\(.[0].status): \(length)")
+            | join("\n")
+          ' jest-results.json)
 
-          if [ "$FAILED_COUNT" -eq 0 ]; then
+          # Build details
+          DETAILS=$(jq -r '
+            .testResults[]
+            | "\(.name): \(.status)"
+          ' jest-results.json)
+
+          # Decide status
+          if [ "$EXIT_CODE" = "0" ]; then
             STATUS="✅ UnitTests passed"
           else
             STATUS="❌ UnitTests failed"
           fi
 
-          MESSAGE="${STATUS} on branch **${BRANCH}**.
+          # Write message to a file (avoids YAML parsing issues)
+          {
+            echo "$STATUS on branch **$BRANCH**."
+            echo
+            echo "**Summary**"
+            echo '```'
+            echo "$SUMMARY"
+            echo '```'
+            echo
+            echo "**Details**"
+            echo '```'
+            echo "$DETAILS"
+            echo '```'
+          } > message.txt
 
-**Summary**
-\`\`\`
-$SUMMARY
-\`\`\`
-
-**Details**
-\`\`\`
-$DETAILS
-\`\`\`
-"
-
-          jq -n --arg content "$MESSAGE" '{content: $content}' \
+          # Send to Discord using jq to build JSON
+          jq -n --rawfile content message.txt '{content: $content}' \
             | curl -H "Content-Type: application/json" \
                   -X POST \
                   -d @- \
