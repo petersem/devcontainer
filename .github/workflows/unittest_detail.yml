@@ -66,12 +66,14 @@ jobs:
           UNCOVERED=$(jq -r '
             to_entries
             | map(
-                select(
-                  .value.lines.pct < 100
-                  or .value.functions.pct < 100
-                  or .value.branches.pct < 100
-                )
-                | "\(.key)\n  Lines: \(.value.lines.pct)%\n  Functions: \(.value.functions.pct)%\n  Branches: \(.value.branches.pct)%"
+                .key as $file
+                | .value as $cov
+                | select(
+                    ($cov.lines.pct // 100) < 100 or
+                    ($cov.functions.pct // 100) < 100 or
+                    ($cov.branches.pct // 100) < 100
+                  )
+                | "\($file)\n  Lines: \($cov.lines.pct // 0)%\n  Functions: \($cov.functions.pct // 0)%\n  Branches: \($cov.branches.pct // 0)%"
               )
             | join("\n\n")
           ' coverage/coverage-final.json)
