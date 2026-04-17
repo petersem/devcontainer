@@ -76,6 +76,26 @@ jobs:
             | join("\n\n")
           ' coverage/coverage-final.json)
 
+          # Uncovered lines
+            UNCOVERED_LINES=$(jq -r '
+              to_entries
+              | map(
+                  .key as $file
+                  | .value as $cov
+                  | $cov.s as $counts
+                  | $cov.statementMap as $stmts
+                  | [
+                      $stmts
+                      | to_entries[]
+                      | select($counts[.key|tostring] == 0)
+                      | .value.start.line
+                    ]
+                  | select(length > 0)
+                  | "\($file):\n  Uncovered lines: \(join(", "))"
+                )
+              | join("\n\n")
+            ' coverage/coverage-final.json)
+
           # Decide status
           if [ "$EXIT_CODE" = "0" ]; then
             STATUS="✅ UnitTests passed"
@@ -96,7 +116,13 @@ jobs:
             echo '```'
             echo "$COVERAGE"
             echo '```'
+            echo "**Uncovered**"
+            echo '```'
             echo "$UNCOVERED"
+            echo '```'
+            echo "**Lines Not Covered**"
+            echo '```'
+            echo "$UNCOVERED_LINES"
             echo '```'
             echo "**Test Details**"
             echo '```'
