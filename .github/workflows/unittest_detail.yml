@@ -78,6 +78,7 @@ jobs:
             to_entries
             | map(
                 .key as $file
+                | .value as $cov
                 | ($cov.s // {}) as $counts
                 | ($cov.statementMap // {}) as $stmts
                 | [
